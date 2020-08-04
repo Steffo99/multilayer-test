@@ -39,26 +39,32 @@ function syncAudio() {
 
 }
 
+async function smoothTowards(gainNode, target, transitionTime) {
+    let change = target - gainNode.gain.value;
+
+    for(let i = 0; i <= 1; i += 0.01) {
+        gainNode.gain.value += change / 100;
+        await new Promise(r => setTimeout(r, transitionTime / 100));
+    }
+}
+
 function click1() {
     syncAudio();
 
-    console.debug("Setting gain for 1...");
-    volumeNode1.gain.value = 1;
-    volumeNode2.gain.value = 0;
+    smoothTowards(volumeNode1, 1, 1);
+    smoothTowards(volumeNode2, 0, 1);
 }
 
 function click2() {
     syncAudio();
 
-    console.debug("Setting gain for 2...");
-    volumeNode1.gain.value = 0;
-    volumeNode2.gain.value = 1;
+    smoothTowards(volumeNode1, 0, 1);
+    smoothTowards(volumeNode2, 1, 1);
 }
 
 function clickB() {
     syncAudio();
 
-    console.debug("Setting gain for both...");
-    volumeNode1.gain.value = 0.75;
-    volumeNode2.gain.value = 0.75;
+    smoothTowards(volumeNode1, 0.75, 1);
+    smoothTowards(volumeNode2, 0.75, 1);
 }
